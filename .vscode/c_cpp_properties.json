@@ -28,8 +28,8 @@
                 "/opt/devkitpro/devkitA64/lib/gcc/aarch64-none-elf/9.2.0/include/**",
                 "/opt/devkitpro/libnx/include/**",
                 "/opt/devkitpro/portlibs/switch/include/**",
-                "/opt/devkitpro/portlibs/switch/include/**",
                 "/opt/devkitpro/portlibs/switch/include/freetype2/**",
+                "${workspaceFolder}/include/**",
                 "${workspaceFolder}/libs/libtesla/include/**"
             ],
             "defines": [
