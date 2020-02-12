@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tesla.hpp>
+#include <string>
 #include <list>
 #include <chrono>
 
@@ -8,7 +9,7 @@
 
 class TextReader : public tsl::Gui {
 public:
-    TextReader(const char* path);
+    TextReader(std::string path);
     ~TextReader();
 
     tsl::Element* createUI() override;
@@ -25,7 +26,7 @@ public:
     }
 
 protected:
-    inline void printLn(const char* text, u32 x, u32 y, u32 fontSize, tsl::Screen *screen);
+    inline void printLn(std::string text, u32 x, u32 y, u32 fontSize, tsl::Screen *screen);
 
 private:
     FILE *m_file;

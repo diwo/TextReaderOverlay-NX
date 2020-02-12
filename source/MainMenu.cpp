@@ -1,7 +1,7 @@
 #include <tesla.hpp>
 
 #include <MainMenu.hpp>
-#include <TextReader.hpp>
+#include <FileSelect.hpp>
 #include <LogMenu.hpp>
 
 MainMenu::MainMenu() {}
@@ -13,10 +13,10 @@ tsl::Element* MainMenu::createUI() {
     auto rootFrame = new tsl::element::Frame();
     auto menuItems = new tsl::element::List();
 
-    auto textReader = new tsl::element::ListItem("Open Reader");
-    textReader->setClickListener([](s64 keys) {
+    auto fileSelect = new tsl::element::ListItem("Select File...");
+    fileSelect->setClickListener([](s64 keys) {
         if (keys & KEY_A) {
-            tsl::Gui::changeTo(new TextReader("sdmc:/switch/.overlays/TextReaderOverlay/sample.txt"));
+            tsl::Gui::changeTo(new FileSelect("sdmc:/"));
             return true;
         }
         return false;
@@ -32,7 +32,7 @@ tsl::Element* MainMenu::createUI() {
     });
 
     rootFrame->addElement(menuItems);
-    menuItems->addItem(textReader);
+    menuItems->addItem(fileSelect);
     menuItems->addItem(logMenu);
 
     return rootFrame;

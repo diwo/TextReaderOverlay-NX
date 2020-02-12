@@ -1,4 +1,5 @@
 #include <Font.hpp>
+#include <Log.hpp>
 
 FTLibrary::FTLibrary() {
     if (FT_Init_FreeType(&m_library))

@@ -7,8 +7,6 @@
 #include <functional>
 #include <stdexcept>
 
-#include <Log.hpp>
-
 class FTLibrary {
 public:
     FTLibrary();

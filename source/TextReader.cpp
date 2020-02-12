@@ -1,10 +1,9 @@
 #include <tesla.hpp>
-#include <string.h>
 
 #include <TextReader.hpp>
 #include <Log.hpp>
 
-TextReader::TextReader(const char* path)
+TextReader::TextReader(std::string path)
 : m_font("sdmc:/switch/.overlays/TextReaderOverlay/fonts/UbuntuMono/UbuntuMono-Regular.ttf"),
   m_text({}),
   m_size(10),
@@ -12,8 +11,9 @@ TextReader::TextReader(const char* path)
   m_scroll_y(0),
   m_debug(false)
 {
-    m_file = fopen(path, "r");
+    m_file = fopen(path.c_str(), "r");
     if (m_file) {
+        Log::log("Opened file %s", path.c_str());
         char buf[200];
         u8 line = 0;
         while (line < 50 && fgets(buf, sizeof(buf), m_file) != nullptr) {
@@ -21,6 +21,8 @@ TextReader::TextReader(const char* path)
             m_text.push_back(std::string(buf));
             line++;
         }
+    } else {
+        Log::log("Could not open file %s", path.c_str());
     }
 }
 TextReader::~TextReader() {
@@ -32,7 +34,7 @@ tsl::Element* TextReader::createUI() {
 
     rootFrame->addElement(new tsl::element::CustomDrawer(0, 0, FB_WIDTH, FB_HEIGHT, [this](u16 x, u16 y, tsl::Screen *screen) {
         if (!m_file) {
-            screen->drawString("Could not open file", true, 10, 10, 10, tsl::a(0xFFFF));
+            screen->drawString("Could not open file", true, 20, 50, 16, tsl::a(0xFFFF));
             return;
         }
 
@@ -54,8 +56,8 @@ tsl::Element* TextReader::createUI() {
     return rootFrame;
 }
 
-void TextReader::printLn(const char* text, u32 x, u32 y, u32 fontSize, tsl::Screen *screen) {
-    m_font.print(text, x, y, fontSize, [screen](u32 x, u32 y, u8 grad) {
+void TextReader::printLn(std::string text, u32 x, u32 y, u32 fontSize, tsl::Screen *screen) {
+    m_font.print(text.c_str(), x, y, fontSize, [screen](u32 x, u32 y, u8 grad) {
         screen->setPixelBlendSrc(x, y, tsl::a({ 0xF, 0xF, 0xF, (u8)(grad >> 4) }));
     });
 }
