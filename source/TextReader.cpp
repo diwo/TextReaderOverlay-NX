@@ -60,7 +60,7 @@ void TextReader::printLn(const char* text, u32 x, u32 y, u32 fontSize, tsl::Scre
     });
 }
 
-void TextReader::update(s64 keysDown, s64 keysHeld, JoystickPosition joyStickPosLeft, JoystickPosition joyStickPosRight, u32 touchX, u32 touchY) {
+void TextReader::handleInputs(s64 keysDown, s64 keysHeld, JoystickPosition joyStickPosLeft, JoystickPosition joyStickPosRight, u32 touchX, u32 touchY) {
     if (keysHeld & (KEY_LSTICK_UP | KEY_RSTICK_UP))
         m_scroll_y--;
     if (keysHeld & (KEY_LSTICK_DOWN | KEY_RSTICK_DOWN))

@@ -12,7 +12,7 @@ public:
     ~TextReader();
 
     tsl::Element* createUI() override;
-    void update(s64 keysDown, s64 keysHeld, JoystickPosition joyStickPosLeft, JoystickPosition joyStickPosRight, u32 touchX, u32 touchY) override;
+    void handleInputs(s64 keysDown, s64 keysHeld, JoystickPosition joyStickPosLeft, JoystickPosition joyStickPosRight, u32 touchX, u32 touchY) override;
 
     void preDraw(tsl::Screen *screen) override {
         screen->fillScreen(tsl::a({ 0x0, 0x0, 0x0, 0xD }));
