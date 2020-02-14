@@ -4,21 +4,25 @@
 #include <string>
 #include <list>
 
-class FileSelect : public tsl::Gui {
-public:
-    FileSelect(std::string path);
-    ~FileSelect();
+#include <FileSelectEntry.hpp>
 
-    tsl::Element* createUI() override;
+namespace fsel
+{
+    bool endsWith(std::string str, std::string suffix);
 
-private:
-    static bool endsWith(std::string str, std::string suffix);
-    static bool compareIgnoreCase(std::string s1, std::string s2);
-    static std::string toLowerCase(std::string str);
+    class FileSelect : public tsl::Gui {
+    public:
+        FileSelect(std::string path);
+        ~FileSelect();
 
-private:
-    std::string m_path;
-    std::list<std::string> m_dirs;
-    std::list<std::string> m_textFiles;
-    bool m_failed;
-};
+        tsl::Element* createUI() override;
+        void preDraw(tsl::Screen *screen) override;
+
+    private:
+        std::string m_path;
+        std::list<FileSelectEntry*> m_entries;
+        bool m_failed;
+    };
+}
+
+using fsel::FileSelect;

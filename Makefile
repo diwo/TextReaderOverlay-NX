@@ -69,7 +69,7 @@ LIBS	:= -lnx -ltesla -lnx `freetype-config --libs`
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX) $(TOPDIR)/libs/libtesla
+LIBDIRS	:= $(PORTLIBS) $(LIBNX) $(TOPDIR)/libs/libtesla $(TOPDIR)/libs/json
 
 
 #---------------------------------------------------------------------------------

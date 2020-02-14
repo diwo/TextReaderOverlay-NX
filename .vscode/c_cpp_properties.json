@@ -30,7 +30,8 @@
                 "/opt/devkitpro/portlibs/switch/include/**",
                 "/opt/devkitpro/portlibs/switch/include/freetype2/**",
                 "${workspaceFolder}/include/**",
-                "${workspaceFolder}/libs/libtesla/include/**"
+                "${workspaceFolder}/libs/libtesla/include/**",
+                "${workspaceFolder}/libs/json/include/**"
             ],
             "defines": [
                 "SWITCH",
