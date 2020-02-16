@@ -54,6 +54,7 @@ private:
 private:
     std::string m_path;
     FILE *m_file;
+    u32 m_totalLines;
     u32 m_lineNum;
     u32 m_chunkMid;
     std::vector<TextReaderChunk> m_chunks;

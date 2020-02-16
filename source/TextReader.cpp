@@ -51,6 +51,7 @@ std::string TextReaderChunk::getLine(u32 lineOffset) {
 
 TextReader::TextReader(std::string path)
 : m_path(path),
+  m_totalLines(0),
   m_lineNum(0),
   m_chunkMid(0),
   m_loading(0),
@@ -87,6 +88,7 @@ tsl::Element* TextReader::createUI() {
                             m_chunks.push_back(TextReaderChunk(ftell(m_file)));
                     }
                 }
+                m_totalLines = line + 1;
                 scrollTo(m_lineNum);
             }
             else {
@@ -115,6 +117,9 @@ tsl::Element* TextReader::createUI() {
             }
         }
 
+        u32 progressY = m_lineNum * (FB_HEIGHT - 20) / m_totalLines;
+        screen->drawRect(0, progressY, 1, 20, tsl::a({0x8, 0x8, 0x8, 0xF}));
+
         if (m_debug)
             screen->drawString(std::to_string(m_fps).c_str(), true, FB_WIDTH - 20, 10, 10, tsl::a(0xFFFF));
     }));
@@ -130,14 +135,36 @@ void TextReader::printLn(std::string text, u32 x, u32 y, u32 fontSize, tsl::Scre
 }
 
 void TextReader::handleInputs(s64 keysDown, s64 keysHeld, JoystickPosition joyStickPosLeft, JoystickPosition joyStickPosRight, u32 touchX, u32 touchY) {
-    if (keysHeld & KEY_LSTICK_UP)
-        scroll(-2);
-    if (keysHeld & KEY_LSTICK_DOWN)
-        scroll(2);
-    if (keysHeld & KEY_LSTICK_LEFT)
-        scroll(-20);
-    if (keysHeld & KEY_LSTICK_RIGHT)
-        scroll(20);
+    if (keysHeld & KEY_ZR) {
+        if (keysHeld & KEY_LSTICK_UP)
+            scrollTo(0);
+        if (keysHeld & KEY_LSTICK_DOWN)
+            scroll(m_totalLines);
+        if (keysHeld & KEY_LSTICK_LEFT)
+            scroll(-1000);
+        if (keysHeld & KEY_LSTICK_RIGHT)
+            scroll(1000);
+    }
+    else if (keysHeld & KEY_ZL) {
+        if (keysHeld & KEY_LSTICK_UP)
+            scroll(-100);
+        if (keysHeld & KEY_LSTICK_DOWN)
+            scroll(100);
+        if (keysHeld & KEY_LSTICK_LEFT)
+            scroll(-200);
+        if (keysHeld & KEY_LSTICK_RIGHT)
+            scroll(200);
+    }
+    else {
+        if (keysHeld & KEY_LSTICK_UP)
+            scroll(-2);
+        if (keysHeld & KEY_LSTICK_DOWN)
+            scroll(2);
+        if (keysHeld & KEY_LSTICK_LEFT)
+            scroll(-20);
+        if (keysHeld & KEY_LSTICK_RIGHT)
+            scroll(20);
+    }
 
     if (keysHeld & KEY_RSTICK_UP)
         scroll(-1);
@@ -167,7 +194,7 @@ void TextReader::scrollTo(u32 line) {
 }
 
 void TextReader::scroll(s32 offset) {
-    u32 newLineNum = std::max((s32)m_lineNum + offset, 0);
+    u32 newLineNum = std::min(std::max((s32)m_lineNum + offset, 0), (s32)m_totalLines);
     u32 newChunk = newLineNum / TextReaderChunk::MAX_SIZE;
     u32 newOffset = newLineNum % TextReaderChunk::MAX_SIZE;
 
