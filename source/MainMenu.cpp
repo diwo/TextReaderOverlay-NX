@@ -3,6 +3,7 @@
 #include <MainMenu.hpp>
 #include <FileSelect.hpp>
 #include <FavoritesMenu.hpp>
+#include <HelpMenu.hpp>
 #include <LogMenu.hpp>
 
 tsl::Element* MainMenu::createUI() {
@@ -12,15 +13,6 @@ tsl::Element* MainMenu::createUI() {
     m_menuItems = new tsl::element::List();
     m_debug = false;
 
-    auto fileSelect = new tsl::element::ListItem("Browse...");
-    fileSelect->setClickListener([](s64 keys) {
-        if (keys & KEY_A) {
-            tsl::Gui::changeTo(new FileSelect("sdmc:/"));
-            return true;
-        }
-        return false;
-    });
-    
     auto favorites = new tsl::element::ListItem("Favorites");
     favorites->setClickListener([](s64 keys) {
         if (keys & KEY_A) {
@@ -30,9 +22,28 @@ tsl::Element* MainMenu::createUI() {
         return false;
     });
 
+    auto fileSelect = new tsl::element::ListItem("Browse...");
+    fileSelect->setClickListener([](s64 keys) {
+        if (keys & KEY_A) {
+            tsl::Gui::changeTo(new FileSelect("sdmc:/"));
+            return true;
+        }
+        return false;
+    });
+
+    auto help = new tsl::element::ListItem("Help");
+    help->setClickListener([](s64 keys) {
+        if (keys & KEY_A) {
+            tsl::Gui::changeTo(new HelpMenu());
+            return true;
+        }
+        return false;
+    });
+
     frame->addElement(m_menuItems);
-    m_menuItems->addItem(fileSelect);
     m_menuItems->addItem(favorites);
+    m_menuItems->addItem(fileSelect);
+    m_menuItems->addItem(help);
 
     return frame;
 }

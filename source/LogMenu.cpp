@@ -6,7 +6,7 @@
 tsl::Element* LogMenu::createUI() {
     auto *rootFrame = new tsl::element::Frame();
 
-    rootFrame->addElement(new tsl::element::CustomDrawer(0, 0, 100, FB_WIDTH, [](u16 x, u16 y, tsl::Screen *screen) {
+    rootFrame->addElement(new tsl::element::CustomDrawer(0, 0, FB_WIDTH, FB_HEIGHT, [](u16 x, u16 y, tsl::Screen *screen) {
         Log::forEach([screen](const char* msg, int i) {
             screen->drawString(msg, false, 20, 80 + i*12, 12, tsl::a(0xFFFF));
         });
