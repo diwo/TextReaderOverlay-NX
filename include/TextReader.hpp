@@ -3,6 +3,7 @@
 #include <tesla.hpp>
 #include <string>
 #include <vector>
+#include <set>
 #include <functional>
 #include <chrono>
 
@@ -45,6 +46,9 @@ public:
 
     void scrollTo(u32 line);
     void scroll(s32 offset);
+    void toggleBookmark();
+    void previousBookmark();
+    void nextBookmark();
 
     void preDraw(tsl::Screen *screen) override {
         screen->fillScreen(tsl::a({ 0x0, 0x0, 0x0, 0xD }));
@@ -77,6 +81,7 @@ private:
     Font m_font;
     u32 m_size;
     s32 m_panx;
+    std::set<u32> m_bookmarks;
 
     std::chrono::steady_clock::time_point m_timer = std::chrono::steady_clock::now();
     u32 m_fps;

@@ -26,6 +26,8 @@ tsl::Element* HelpMenu::createUI() {
         show(offset, i++, "\uE07D", "Adjust Font Size");
         show(offset, i++, "\uE082", "Scroll Sideways");
         show(offset, i++, "\uE08B", "Beginning of Line");
+        show(offset, i++, "\uE0A3", "Toggle Bookmark");
+        show(offset, i++, "\uE0A4 \uE0A4", "Prev/Next Bookmark");
         show(offset, i++, "\uE0A2", "Hide Overlay");
         show(offset, i++, "\uE085 \uE086 \uE0EF", "Toggle Overlay");
     }));

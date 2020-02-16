@@ -63,9 +63,15 @@ TextReader::TextReader(std::string path)
   m_debug(false)
 {
     auto j = Config::read();
-    auto found = j["files"][m_path].find("resume");
-    if (found != j["files"][m_path].end()) {
-        m_lineNum = *found;
+    auto resume = j["files"][m_path].find("resume");
+    if (resume != j["files"][m_path].end()) {
+        m_lineNum = *resume;
+    }
+    auto bookmarks = j["files"][m_path].find("bookmarks");
+    if (bookmarks != j["files"][m_path].end()) {
+        for (auto &b : *bookmarks) {
+            m_bookmarks.insert((u32)b);
+        }
     }
 }
 TextReader::~TextReader() {
@@ -119,6 +125,9 @@ tsl::Element* TextReader::createUI() {
             u32 line = (m_lineNum + i) % TextReaderChunk::MAX_SIZE;
 
             if (chunk < m_chunks.size()) {
+                if (m_bookmarks.find(m_lineNum + i) != m_bookmarks.end()) {
+                    screen->drawRect(0, i * m_size, FB_WIDTH, 1, tsl::a({0x6, 0x1, 0x1, 0xF}));
+                }
                 printLn(
                     m_chunks[chunk].getLine(line).c_str(),
                     10 + m_panx * m_size,
@@ -158,9 +167,9 @@ void TextReader::handleInputs(s64 keysDown, s64 keysHeld, JoystickPosition joySt
     }
     else if (keysHeld & KEY_ZL) {
         if (keysHeld & KEY_LSTICK_UP)
-            scroll(-100);
+            scroll(-20);
         if (keysHeld & KEY_LSTICK_DOWN)
-            scroll(100);
+            scroll(20);
         if (keysHeld & KEY_LSTICK_LEFT)
             scroll(-200);
         if (keysHeld & KEY_LSTICK_RIGHT)
@@ -172,9 +181,9 @@ void TextReader::handleInputs(s64 keysDown, s64 keysHeld, JoystickPosition joySt
         if (keysHeld & KEY_LSTICK_DOWN)
             scroll(2);
         if (keysHeld & KEY_LSTICK_LEFT)
-            scroll(-20);
+            scroll(-1);
         if (keysHeld & KEY_LSTICK_RIGHT)
-            scroll(20);
+            scroll(1);
     }
 
     if (keysHeld & KEY_RSTICK_UP)
@@ -195,6 +204,13 @@ void TextReader::handleInputs(s64 keysDown, s64 keysHeld, JoystickPosition joySt
 
     if (keysDown & KEY_X)
         tsl::Gui::playOutroAnimation();
+
+    if (keysDown & KEY_Y)
+        toggleBookmark();
+    if (keysDown & KEY_L)
+        previousBookmark();
+    if (keysDown & KEY_R)
+        nextBookmark();
 
     if (keysDown & KEY_MINUS)
         m_debug = !m_debug;
@@ -246,6 +262,42 @@ void TextReader::loadText(u32 chunk) {
 void TextReader::unloadText(u32 chunk) {
     if (chunk < m_chunks.size()) {
         m_chunks[chunk].unloadText();
+    }
+}
+
+void TextReader::toggleBookmark() {
+    if (m_bookmarks.find(m_lineNum) == m_bookmarks.end()) {
+        m_bookmarks.insert(m_lineNum);
+    } else {
+        m_bookmarks.erase(m_lineNum);
+    }
+    Config::update([this](json &j) {
+        j["files"][m_path]["bookmarks"] = m_bookmarks;
+    });
+}
+
+void TextReader::previousBookmark() {
+    u32 prev;
+    bool any = false;
+    for (auto b : m_bookmarks) {
+        if (b >= m_lineNum) {
+            if (any)
+                scrollTo(prev);
+            break;
+        }
+        prev = b;
+        any = true;
+    }
+    if (any)
+        scrollTo(prev);
+}
+
+void TextReader::nextBookmark() {
+    for (auto b : m_bookmarks) {
+        if (b > m_lineNum) {
+            scrollTo(b);
+            break;
+        }
     }
 }
 
