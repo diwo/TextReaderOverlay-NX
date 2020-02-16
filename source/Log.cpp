@@ -32,7 +32,7 @@ void Log::forEach(std::function<void(const char*, int i)> fn) {
             break;
 
         std::stringstream stream;
-        stream << std::setw(std::to_string(s_next_idx).size()) << line << ": "
+        stream << std::setw(std::to_string(s_next_idx).size()) << (line + 1) << " "
                << s_messages[line % MAX_SIZE];
         fn(stream.str().c_str(), i);
     }

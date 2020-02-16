@@ -12,7 +12,7 @@ tsl::Element* MainMenu::createUI() {
     m_menuItems = new tsl::element::List();
     m_debug = false;
 
-    auto fileSelect = new tsl::element::ListItem("Browse File...");
+    auto fileSelect = new tsl::element::ListItem("Browse...");
     fileSelect->setClickListener([](s64 keys) {
         if (keys & KEY_A) {
             tsl::Gui::changeTo(new FileSelect("sdmc:/"));

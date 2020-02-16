@@ -12,7 +12,6 @@ namespace fsel
     {
         DIR* dir = opendir(path.c_str());
         if (dir) {
-            Log::log("Opened dir %s", path.c_str());
             auto favorites = Config::read()["favorites"];
             if (!favorites.is_array()) {
                 favorites = {};
