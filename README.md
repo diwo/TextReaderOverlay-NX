@@ -10,3 +10,7 @@ TextReaderOverlay is an overlay for the Nintendo Switch that lets you view text 
 4. Place `*.txt` files anywhere on your SD card
 5. Press `L + D-Pad-Down + R-Stick` to launch Tesla-Menu after reboot
 6. Select `Text Reader` from the menu
+
+## Screenshot
+
+<img src="./res/TextReader.jpg" />
