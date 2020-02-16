@@ -3,6 +3,7 @@
 #include <tesla.hpp>
 #include <string>
 #include <vector>
+#include <functional>
 #include <chrono>
 
 #include <Font.hpp>
@@ -21,6 +22,17 @@ public:
 private:
     long int m_fileOffset;
     std::vector<std::string> *m_lines;
+};
+
+class TextReaderFrame : public tsl::element::Frame {
+public:
+    TextReaderFrame(std::function<void()> onExit);
+    ~TextReaderFrame();
+
+    bool onClick(s64 key) override;
+
+private:
+    std::function<void()> m_onExit;
 };
 
 class TextReader : public tsl::Gui {

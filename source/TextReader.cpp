@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include <TextReader.hpp>
+#include <Config.hpp>
 #include <Log.hpp>
 
 
@@ -60,15 +61,25 @@ TextReader::TextReader(std::string path)
   m_size(10),
   m_panx(0),
   m_debug(false)
-{}
+{
+    auto j = Config::read();
+    auto found = j["files"][m_path].find("resume");
+    if (found != j["files"][m_path].end()) {
+        m_lineNum = *found;
+    }
+}
 TextReader::~TextReader() {
     if (m_file) fclose(m_file);
 }
 
 tsl::Element* TextReader::createUI() {
-    tsl::element::Frame *rootFrame = new tsl::element::Frame();
+    tsl::element::Frame *frame = new TextReaderFrame([this]() {
+        Config::update([this](json &j) {
+            j["files"][m_path]["resume"] = m_lineNum;
+        });
+    });
 
-    rootFrame->addElement(new tsl::element::CustomDrawer(0, 0, FB_WIDTH, FB_HEIGHT, [this](u16 x, u16 y, tsl::Screen *screen) {
+    frame->addElement(new tsl::element::CustomDrawer(0, 0, FB_WIDTH, FB_HEIGHT, [this](u16 x, u16 y, tsl::Screen *screen) {
         if (m_loading < 2) {
             screen->drawString("Loading... May take a few seconds", true, 20, 50, 16, tsl::a(0xFFFF));
             m_loading++;
@@ -124,7 +135,7 @@ tsl::Element* TextReader::createUI() {
             screen->drawString(std::to_string(m_fps).c_str(), true, FB_WIDTH - 20, 10, 10, tsl::a(0xFFFF));
     }));
 
-    return rootFrame;
+    return frame;
 }
 
 void TextReader::printLn(std::string text, u32 x, u32 y, u32 fontSize, tsl::Screen *screen) {
@@ -236,4 +247,18 @@ void TextReader::unloadText(u32 chunk) {
     if (chunk < m_chunks.size()) {
         m_chunks[chunk].unloadText();
     }
+}
+
+TextReaderFrame::TextReaderFrame(std::function<void()> onExit)
+: m_onExit(onExit)
+{}
+TextReaderFrame::~TextReaderFrame() {}
+
+bool TextReaderFrame::onClick(s64 key) {
+    if (key == KEY_B) {
+        m_onExit();
+        tsl::Gui::goBack();
+        return true;
+    }
+    return tsl::element::Frame::onClick(key);
 }
