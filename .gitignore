@@ -8,3 +8,5 @@ build/
 *.nacp
 
 *.nro
+
+TextReaderOverlay-*.zip

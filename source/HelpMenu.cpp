@@ -1,6 +1,7 @@
 #include <tesla.hpp>
 
 #include <HelpMenu.hpp>
+#include <Overlay.hpp>
 
 tsl::Element* HelpMenu::createUI() {
     auto *rootFrame = new tsl::element::Frame();
@@ -30,6 +31,8 @@ tsl::Element* HelpMenu::createUI() {
         show(offset, i++, "\uE0A4 \uE0A4", "Prev/Next Bookmark");
         show(offset, i++, "\uE0A2", "Hide Overlay");
         show(offset, i++, "\uE085 \uE086 \uE0EF", "Toggle Overlay");
+
+        screen->drawString(TextReaderOverlay::VERSION, true, 420, 710, 10, tsl::a(0xFFFF));
     }));
 
     return rootFrame;

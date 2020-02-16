@@ -38,6 +38,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
 APP_TITLE	:=	Text Reader
+APP_VERSION :=  1.0
 
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
@@ -45,8 +46,9 @@ SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
 # ROMFS		:=	romfs
-
 NO_ICON		:=  1
+
+RELEASE_ZIP		:= $(TARGET)-$(APP_VERSION).zip
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -172,7 +174,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@$(MAKE) --no-print-directory -C $(TOPDIR)/libs/libtesla -f Makefile clean
-	@rm -fr $(BUILD) $(TARGET).ovl $(TARGET).nro $(TARGET).nacp $(TARGET).elf
+	@rm -fr $(BUILD) $(TARGET).ovl $(TARGET).nro $(TARGET).nacp $(TARGET).elf $(RELEASE_ZIP)
 
 
 #---------------------------------------------------------------------------------
@@ -214,3 +216,15 @@ clean:
 #---------------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------------
+
+.PHONY:		release
+
+release:	$(RELEASE_ZIP)
+
+$(RELEASE_ZIP): $(OUTPUT).ovl
+	rm -rf sdfiles/
+	mkdir -p sdfiles/switch/.overlays/TextReaderOverlay/
+	cp $(OUTPUT).ovl sdfiles/switch/.overlays/
+	cp -r package/* sdfiles/switch/.overlays/TextReaderOverlay/
+	cd sdfiles/ && zip -r ../$(RELEASE_ZIP) * && cd ..
+	rm -rf sdfiles/
