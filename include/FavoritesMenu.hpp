@@ -10,9 +10,15 @@ public:
     FavoritesMenu();
     ~FavoritesMenu();
 
-    tsl::Element* createUI();
-    void preDraw(tsl::Screen *screen) override;
+    tsl::elm::Element* createUI() override;
 
 private:
     std::list<FileSelectEntry*> m_entries;
+};
+
+class FavoritesMenuFrame : public tsl::elm::OverlayFrame {
+public:
+    FavoritesMenuFrame() : OverlayFrame("", "") {}
+
+    void draw(tsl::gfx::Renderer *renderer) override;
 };

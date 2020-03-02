@@ -2,27 +2,26 @@
 
 #include <tesla.hpp>
 #include <string>
-#include <list>
+#include <vector>
 
-#include <FileSelectEntry.hpp>
+class FileSelectEntry;
 
-namespace fsel
-{
-    bool endsWith(std::string str, std::string suffix);
+class FileSelect : public tsl::Gui {
+public:
+    FileSelect(std::string const &path);
+    ~FileSelect();
 
-    class FileSelect : public tsl::Gui {
-    public:
-        FileSelect(std::string path);
-        ~FileSelect();
+    tsl::elm::Element* createUI() override;
 
-        tsl::Element* createUI() override;
-        void preDraw(tsl::Screen *screen) override;
+private:
+    std::string m_path;
+    std::vector<FileSelectEntry*> m_entries;
+    bool m_failed;
+};
 
-    private:
-        std::string m_path;
-        std::list<FileSelectEntry*> m_entries;
-        bool m_failed;
-    };
-}
+class FileSelectFrame : public tsl::elm::OverlayFrame {
+public:
+    FileSelectFrame() : OverlayFrame("", "") {}
 
-using fsel::FileSelect;
+    void draw(tsl::gfx::Renderer *renderer) override;
+};

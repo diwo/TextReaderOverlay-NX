@@ -38,6 +38,9 @@
                 "__SWITCH__",
                 "__aarch64__"
             ],
+            "forcedInclude": [
+                "${workspaceFolder}/.vscode/vscode-undef.h"
+            ],
             "compilerPath": "/opt/devkitpro/devkitA64/bin/aarch64-none-elf-g++",
             "cStandard": "c11",
             "cppStandard": "c++17",

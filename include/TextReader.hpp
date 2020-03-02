@@ -13,55 +13,45 @@ class TextReaderChunk {
 public:
     static const size_t MAX_SIZE = 1000;
 
-    TextReaderChunk(long int fileOffset);
-    ~TextReaderChunk();
+    TextReaderChunk(long int fileOffset)
+        : m_fileOffset(fileOffset),
+          m_lines(nullptr)
+    {}
+    ~TextReaderChunk() { unloadText(); }
 
     void loadText(FILE *file);
     void unloadText();
-    std::string getLine(u32 lineOffset);
+    std::string& getLine(u32 lineOffset) const;
 
 private:
+    static std::string EMPTY_STRING;
     long int m_fileOffset;
     std::vector<std::string> *m_lines;
 };
 
-class TextReaderFrame : public tsl::element::Frame {
-public:
-    TextReaderFrame(std::function<void()> onExit);
-    ~TextReaderFrame();
-
-    bool onClick(s64 key) override;
-
-private:
-    std::function<void()> m_onExit;
-};
-
 class TextReader : public tsl::Gui {
 public:
-    TextReader(std::string path);
+    TextReader(std::string const &path);
     ~TextReader();
 
-    tsl::Element* createUI() override;
-    void handleInputs(s64 keysDown, s64 keysHeld, JoystickPosition joyStickPosLeft, JoystickPosition joyStickPosRight, u32 touchX, u32 touchY) override;
+    tsl::elm::Element* createUI() override;
+    bool handleInput(u64 keysDown, u64 keysHeld, touchPosition touchInput, JoystickPosition leftJoyStick, JoystickPosition rightJoyStick) override;
 
     void scrollTo(u32 line);
     void scroll(s32 offset);
     void toggleBookmark();
     void previousBookmark();
     void nextBookmark();
+    void close() const;
 
-    void preDraw(tsl::Screen *screen) override {
-        screen->fillScreen(tsl::a({ 0x0, 0x0, 0x0, 0xD }));
-    }
-
-    void postDraw(tsl::Screen *screen) override {
+    void update() override {
         auto newTimer = std::chrono::steady_clock::now();
         m_fps = 1000 / std::chrono::duration_cast<std::chrono::milliseconds>(newTimer - m_timer).count();
         m_timer = newTimer;
     }
 
 protected:
-    inline void printLn(std::string text, u32 x, u32 y, u32 fontSize, tsl::Screen *screen);
+    inline void printLn(std::string const &text, s32 x, s32 y, u32 fontSize, tsl::gfx::Renderer *renderer) const;
 
 private:
     void loadText(u32 chunk);
@@ -75,7 +65,7 @@ private:
     u32 m_chunkMid;
     std::vector<TextReaderChunk> m_chunks;
 
-    u32 m_loading;
+    bool m_loading;
     bool m_loaded;
 
     Font m_font;

@@ -1,64 +1,75 @@
 #pragma once
 
+#include <tesla.hpp>
 #include <string>
+#include <filesystem>
 
-namespace fsel
-{
-    bool compareIgnoreCase(std::string s1, std::string s2);
-    std::string toLowerCase(std::string str);
+#include <FileSelect.hpp>
+#include <TextReader.hpp>
+#include <Utils.hpp>
 
-    class FileSelectEntry {
-    public:
-        FileSelectEntry(std::string path, bool favorite);
-        virtual ~FileSelectEntry();
+namespace fs = std::filesystem;
 
-        std::string getPath() { return m_path; }
-        std::string getName();
-        std::string label() { return (isFavorite() ? "\u2605 " : "") + getName(); }
-        void favorite();
-        bool isFavorite() { return m_favorite; }
-        virtual void select() = 0;
+class FileSelectEntry {
+public:
+    FileSelectEntry(std::string const &path, bool favorite)
+        : m_path(path), m_favorite(favorite) {}
 
-        bool operator <(FileSelectEntry &other) {
-            if (ordering() < other.ordering())
-                return true;
-            else if (other.ordering() < ordering())
-                return false;
-            else
-                return compareIgnoreCase(m_path, other.m_path);
-        }
+    virtual ~FileSelectEntry() {}
 
-    protected:
-        virtual int ordering() = 0;
+    std::string getPath() const { return getPathInternal(); }
 
-    private:
-        std::string m_path;
-        bool m_favorite;
-    };
+    std::string label() const {
+        return (isFavorite() ? "\u2605 " : "") + getName();
+    }
 
-    class FileSelectDirEntry : public FileSelectEntry {
-    public:
-        FileSelectDirEntry(std::string path, bool favorite);
-        ~FileSelectDirEntry();
+    void toggleFavorite();
+    bool isFavorite() const { return m_favorite; }
 
-        void select() override;
+    bool operator<(FileSelectEntry const &other) const;
 
-    protected:
-        int ordering() override { return 1; }
-    };
+    virtual std::string getName() const = 0;
+    virtual void select() = 0;
 
-    class FileSelectFileEntry : public FileSelectEntry {
-    public:
-        FileSelectFileEntry(std::string path, bool favorite);
-        ~FileSelectFileEntry();
+protected:
+    fs::path getPathInternal() const { return m_path; }
+    virtual int ordering() const = 0;
 
-        void select() override;
+private:
+    fs::path m_path;
+    bool m_favorite;
+};
 
-    protected:
-        int ordering() override { return 2; }
-    };
-}
+class FileSelectDirEntry : public FileSelectEntry {
+public:
+    FileSelectDirEntry(std::string const &path, bool favorite)
+        : FileSelectEntry(path, favorite) {}
 
-using fsel::FileSelectEntry;
-using fsel::FileSelectDirEntry;
-using fsel::FileSelectFileEntry;
+    std::string getName() const {
+        return getPathInternal().parent_path().filename().string() + "/";
+    }
+
+    void select() override {
+        tsl::changeTo<FileSelect>(getPath());
+    }
+
+protected:
+    int ordering() const override { return 1; }
+};
+
+class FileSelectFileEntry : public FileSelectEntry {
+public:
+    FileSelectFileEntry(std::string const &path, bool favorite)
+        : FileSelectEntry(path, favorite) {}
+
+    std::string getName() const {
+        return getPathInternal().filename();
+    }
+
+    void select() override {
+        tsl::changeTo<TextReader>(getPath());
+    }
+
+protected:
+    int ordering() const override { return 2; }
+};

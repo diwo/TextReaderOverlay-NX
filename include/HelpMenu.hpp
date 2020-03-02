@@ -4,5 +4,8 @@
 
 class HelpMenu : public tsl::Gui {
 public:
-    tsl::Element* createUI();
+    tsl::elm::Element* createUI() override;
+
+private:
+    static inline void showKeybind(tsl::gfx::Renderer *renderer, u32 offset, u32 i, const char* keys, const char* desc);
 };

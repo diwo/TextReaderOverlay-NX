@@ -8,7 +8,7 @@ using nlohmann::json;
 class Config {
 public:
     static json read();
-    static void update(std::function<void(json &)> updater);
+    static void update(std::function<void(json &)> const &updater);
 
 private:
     static json initialize();

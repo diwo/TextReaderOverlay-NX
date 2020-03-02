@@ -4,10 +4,12 @@
 
 class MainMenu : public tsl::Gui {
 public:
-    tsl::Element* createUI() override;
-    void handleInputs(s64 keysDown, s64 keysHeld, JoystickPosition joyStickPosLeft, JoystickPosition joyStickPosRight, u32 touchX, u32 touchY) override;
+    MainMenu() : m_debug(false) {}
+
+    tsl::elm::Element* createUI() override;
+    bool handleInput(u64 keysDown, u64 keysHeld, touchPosition touchInput, JoystickPosition leftJoyStick, JoystickPosition rightJoyStick) override;
 
 private:
-    tsl::element::List* m_menuItems;
+    tsl::elm::List* m_menuItems;
     bool m_debug;
 };
