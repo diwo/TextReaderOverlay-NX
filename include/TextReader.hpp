@@ -45,9 +45,15 @@ public:
     void close() const;
 
     void update() override {
-        auto newTimer = std::chrono::steady_clock::now();
-        m_fps = 1000 / std::chrono::duration_cast<std::chrono::milliseconds>(newTimer - m_timer).count();
-        m_timer = newTimer;
+        auto now = std::chrono::steady_clock::now();
+        m_timeAggregate += std::chrono::duration_cast<std::chrono::milliseconds>(now - m_timePrev);
+        ++m_timeTicks;
+        m_timePrev = now;
+        if (m_timeAggregate > 200ms) {
+            m_fps = 1000 * m_timeTicks / m_timeAggregate.count();
+            m_timeAggregate = 0ms;
+            m_timeTicks = 0;
+        }
     }
 
 protected:
@@ -73,7 +79,9 @@ private:
     s32 m_panx;
     std::set<u32> m_bookmarks;
 
-    std::chrono::steady_clock::time_point m_timer = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point m_timePrev;
+    std::chrono::milliseconds m_timeAggregate;
+    u32 m_timeTicks;
     u32 m_fps;
     bool m_debug;
 };
