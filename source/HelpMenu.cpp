@@ -22,7 +22,7 @@ tsl::elm::Element* HelpMenu::createUI() {
         showKeybind(renderer, offset, i++, "\uE082", "Scroll Sideways");
         showKeybind(renderer, offset, i++, "\uE08B", "Beginning of Line");
         showKeybind(renderer, offset, i++, "\uE0A3", "Toggle Bookmark");
-        showKeybind(renderer, offset, i++, "\uE0A4 \uE0A4", "Prev/Next Bookmark");
+        showKeybind(renderer, offset, i++, "\uE0A4 \uE0A5", "Prev/Next Bookmark");
         showKeybind(renderer, offset, i++, "\uE0A2", "Hide Overlay");
     }));
 
